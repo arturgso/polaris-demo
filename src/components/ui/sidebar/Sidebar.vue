@@ -178,7 +178,7 @@ function collapseSidebar() {
       <div :class="[isCollapsed ? 'p-1' : 'p-3']">
         <button
           type="button"
-          class="flex flex-row gap-2 items-center hover:text-accent px-2 py-1 rounded-md hover:bg-accent-hover/30 w-full"
+          :class="[isCollapsed ? 'flex items-center justify-center w-full mb-2 hover:text-accent' : 'flex flex-row gap-2 items-center hover:text-accent px-2 py-1 rounded-md hover:bg-accent-hover/30 w-full']"
         >
           <LogOut :size="18" />
           <span v-if="!isCollapsed">Sair</span>
