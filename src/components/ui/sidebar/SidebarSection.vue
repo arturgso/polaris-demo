@@ -5,6 +5,7 @@ import { ref } from 'vue';
 defineProps<{
     enableTitle: boolean;
     title?: string;
+    isSidebarCollapsed: boolean;
 }>();
 
 const isCollapsed = ref(true);
@@ -16,10 +17,18 @@ const collapseSection = () => {
 </script>
 
 <template>
-  <div class="flex flex-col p-3 gap-2">
+  <div
+    :class="[
+      'flex flex-col',
+      isSidebarCollapsed ? 'items-center gap-4' : 'p-3 gap-2'
+    ]"
+  >
     <div
       v-if="enableTitle"
-      class="flex justify-between gap-2 uppercase font-bold text-sm text-text-muted items-center"
+      :class="[
+        'flex justify-between gap-2 uppercase font-bold text-sm text-text-muted items-center',
+        isSidebarCollapsed ? 'hidden' : '' 
+      ]"
     >
       <span>{{ title }}</span>
       <button
@@ -34,6 +43,5 @@ const collapseSection = () => {
       </button>
     </div>
     <slot v-if="isCollapsed" />
-    <div />
   </div>
 </template>

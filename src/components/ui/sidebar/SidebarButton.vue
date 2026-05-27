@@ -6,6 +6,7 @@ defineProps<{
     icon?: FunctionalComponent<LucideProps>;
     title: string;
     useRandomColor?: boolean;
+    isCollapsed: boolean;
     //TODO - Add route
 }>();
 
@@ -35,14 +36,17 @@ function generateRandomColor(): string {
     <div
       v-if="useRandomColor"
       :style="{ backgroundColor: generateRandomColor() }"
-      class="w-2 h-2 rounded-full"
+      class="w-3 h-3 rounded-sm"
     />
     <div
       v-else
       class="group-hover:text-accent"
     >
-      <icon :size="16" />
+      <icon :size="isCollapsed ? '20' : '16'" />
     </div>
-    <span class="text-sm">{{ title }}</span>
+    <span
+      v-if="!isCollapsed"
+      class="text-sm"
+    >{{ title }}</span>
   </div>
 </template>

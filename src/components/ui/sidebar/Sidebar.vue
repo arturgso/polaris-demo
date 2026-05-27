@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Brush, Cake, CircleQuestionMark, Cpu, Gift, Heart, LayoutDashboard, LogOut, Package, ShoppingCart, TreePine, type LucideProps } from 'lucide-vue-next';
-import type { FunctionalComponent } from 'vue';
+import { Brush, Cake, CircleQuestionMark, Cpu, Gift, Heart, LayoutDashboard, LogOut, Package, ShoppingCart, Sidebar, TreePine, type LucideProps } from 'lucide-vue-next';
+import { ref, type FunctionalComponent } from 'vue';
 import SidebarButton from './SidebarButton.vue';
 import SidebarSection from './SidebarSection.vue';
 import Divider from './Divider.vue';
@@ -45,32 +45,67 @@ const eventsButtons: shoppingButtonsProps[] = [
 ];
 
 const persons: string[] = ["Beatriz", "Itallo", "Heloisa", "Mauricio", "Brenda", "Carlos"];
+
+const isCollapsed = ref<boolean>(false);
+
+function collapseSidebar() {
+    isCollapsed.value = !isCollapsed.value;
+}
+
 </script>
 
 <template>
-  <aside class="bg-surface w-64 fixed h-full border-r-2 border-border flex flex-col justify-between">
+  <aside
+    :class="[
+      'bg-surface fixed h-full border-r-2 border-border flex flex-col justify-between',
+      isCollapsed ? 'w-12' : 'w-64'
+    ]"
+  >
     <div>
-      <div class="p-3">
-        <h1 class="text-2xl font-bold text-text-secondary">
-          Polaris
-        </h1>
+      <div class="p-3 relative">
+        <div>
+          <h1
+            :class="['text-2xl font-bold text-text-secondary',
+                     isCollapsed ? 'hidden' : ''
+            ]"
+          >
+            Polaris
+          </h1>
+
+          <button
+            type="button"
+            :class="[
+              '  text-text-muted hover:text-accent',
+              isCollapsed ? '' : 'absolute right-3 top-5' 
+            ]"
+            @click="collapseSidebar"
+          >
+            <Sidebar :size="isCollapsed ? 20 : 20" />
+          </button>
+        </div>
       </div>
 
-      <Divider />
+      <Divider :class="[isCollapsed ? 'hidden' : '']" />
 
-      <SidebarSection :enable-title="false">
-        <div>
+      <SidebarSection
+        :enable-title="false"
+        :is-sidebar-collapsed="isCollapsed"
+      >
+        <div :class="[isCollapsed ? 'flex flex-col gap-2' : '']">
           <SidebarButton
             :icon="LayoutDashboard"
             title="dashboard"
+            :is-collapsed="isCollapsed"
           />
           <SidebarButton
             :icon="ShoppingCart"
             title="compras"
+            :is-collapsed="isCollapsed"
           />
           <SidebarButton
             :icon="Gift"
             title="presentes"
+            :is-collapsed="isCollapsed"
           />
         </div>
       </SidebarSection>
@@ -80,8 +115,9 @@ const persons: string[] = ["Beatriz", "Itallo", "Heloisa", "Mauricio", "Brenda",
       <SidebarSection
         :enable-title="true"
         title="Compras"
+        :is-sidebar-collapsed="isCollapsed"
       >
-        <div class="flex flex-col gap-1">
+        <div :class="['flex flex-col', isCollapsed ? 'gap-2' : 'gap-1']">
           <div
             v-for="button in shoppingButtons"
             :key="button.title"
@@ -89,6 +125,7 @@ const persons: string[] = ["Beatriz", "Itallo", "Heloisa", "Mauricio", "Brenda",
             <SidebarButton
               :icon="button.icon"
               :title="button.title"
+              :is-collapsed="isCollapsed"
             />
           </div>
         </div>
@@ -99,8 +136,9 @@ const persons: string[] = ["Beatriz", "Itallo", "Heloisa", "Mauricio", "Brenda",
       <SidebarSection
         :enable-title="true"
         title="Pessoas"
+        :is-sidebar-collapsed="isCollapsed"
       >
-        <div class="flex flex-col gap-1">
+        <div :class="['flex flex-col', isCollapsed ? 'gap-2' : 'gap-1']">
           <div
             v-for="person in persons"
             :key="person"
@@ -108,6 +146,7 @@ const persons: string[] = ["Beatriz", "Itallo", "Heloisa", "Mauricio", "Brenda",
             <SidebarButton
               :use-random-color="true"
               :title="person"
+              :is-collapsed="isCollapsed"
             />
           </div>
         </div>
@@ -118,8 +157,9 @@ const persons: string[] = ["Beatriz", "Itallo", "Heloisa", "Mauricio", "Brenda",
       <SidebarSection
         :enable-title="true"
         title="Eventos"
+        :is-sidebar-collapsed="isCollapsed"
       >
-        <div class="flex flex-col gap-1">
+        <div :class="['flex flex-col', isCollapsed ? 'gap-2' : 'gap-1']">
           <div
             v-for="button in eventsButtons"
             :key="button.title"
@@ -127,6 +167,7 @@ const persons: string[] = ["Beatriz", "Itallo", "Heloisa", "Mauricio", "Brenda",
             <SidebarButton
               :icon="button.icon"
               :title="button.title"
+              :is-collapsed="isCollapsed"
             />
           </div>
         </div>
@@ -134,13 +175,13 @@ const persons: string[] = ["Beatriz", "Itallo", "Heloisa", "Mauricio", "Brenda",
     </div>
     <footer>
       <Divider />
-      <div class="p-3">
+      <div :class="[isCollapsed ? 'p-1' : 'p-3']">
         <button
           type="button"
           class="flex flex-row gap-2 items-center hover:text-accent px-2 py-1 rounded-md hover:bg-accent-hover/30 w-full"
         >
           <LogOut :size="18" />
-          <span>Sair</span>
+          <span v-if="!isCollapsed">Sair</span>
         </button>
       </div>
     </footer>
