@@ -14,7 +14,7 @@ const isSidebarCollapsed = ref<boolean>(false);
   <main>
     <Sidebar @collapse="handleSidebarCollapse" />
     <div 
-      class="container mx-auto p-4 transition-all"
+      class="container mx-auto p-4 transition-all h-dvh"
       :class="isSidebarCollapsed ? 'ml-16' : 'ml-72'" 
     >
       <slot />
