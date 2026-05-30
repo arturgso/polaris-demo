@@ -8,6 +8,7 @@ import ShoppingListToolbar from '../components/shoppingList/ShoppingListToolbar.
 import BaseButton from '../components/ui/BaseButton.vue';
 import BaseEmptyState from '../components/ui/BaseEmptyState.vue';
 import BaseModal from '../components/ui/BaseModal.vue';
+import { DEFAULT_SHOPPING_ITEM_COLOR } from '../constants/shoppingItemColors';
 import {
   createShoppingItem,
   deleteShoppingItem,
@@ -38,6 +39,7 @@ const emptyForm: ShoppingItemFormData = {
   title: '',
   link: '',
   price: 0,
+  color: DEFAULT_SHOPPING_ITEM_COLOR,
   categoryId: 0,
   statusId: 0,
 };
@@ -122,6 +124,7 @@ function openEditModal(item: ShoppingItem) {
     title: item.title,
     link: item.link,
     price: item.price,
+    color: item.color ?? DEFAULT_SHOPPING_ITEM_COLOR,
     categoryId: item.category.id,
     statusId: item.status.id,
   };

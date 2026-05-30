@@ -1,0 +1,12 @@
+export const SHOPPING_ITEM_COLORS = [
+  '#E6B94C',
+  '#6FA66F',
+  '#7292B8',
+  '#D96C75',
+  '#A78BFA',
+  '#2DD4BF',
+  '#F97316',
+  '#EC4899',
+];
+
+export const DEFAULT_SHOPPING_ITEM_COLOR = SHOPPING_ITEM_COLORS[0];

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { EllipsisVertical, ExternalLink, Pencil, Trash2 } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useClickOutside } from '../../composables/useClickOutside';
 import type { ShoppingItem } from '../../types/ShoppingList';
 
-defineProps<{
+const props = defineProps<{
   item: ShoppingItem;
 }>();
 
@@ -15,6 +15,7 @@ const emit = defineEmits<{
 
 const isMenuOpen = ref<boolean>(false);
 const menuRef = ref<HTMLElement | null>(null);
+const isMuted = computed(() => props.item.status.name === 'BOUGHT' || props.item.status.name === 'CANCELED');
 
 const currencyFormatter = new Intl.NumberFormat('pt-BR', {
   style: 'currency',
@@ -52,6 +53,7 @@ useClickOutside(menuRef, () => {
   <article
     ref="menuRef"
     class="relative flex h-full min-h-44 flex-col gap-5 rounded-md border-2 border-border bg-card p-4 transition duration-150 hover:border-accent"
+    :class="isMuted ? 'opacity-55 grayscale hover:opacity-75' : ''"
   >
     <button
       type="button"

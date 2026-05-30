@@ -20,6 +20,7 @@ export interface ShoppingItem {
   title: string;
   link: string;
   price: number;
+  color?: string;
   category: ShoppingItemCategory;
   status: ShoppingItemStatus;
   createdAt: string;
@@ -30,6 +31,7 @@ export interface NewShoppingItemDTO {
   title: string;
   link: string;
   price: number;
+  color: string;
   categoryId: number;
   statusId: number;
 }
@@ -38,6 +40,7 @@ export interface UpdateShoppingItemDTO {
   title?: string;
   link?: string;
   price?: number;
+  color?: string;
   categoryId?: number;
   statusId?: number;
 }
