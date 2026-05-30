@@ -1,36 +1,53 @@
-export const STATUS = {
-  IDEA: "idea",
-  PLANNED: "planned",
-  TO_BUY: "to_buy",
-  BOUGHT: "bought",
-  CANCELED: "canceled",
-} as const;
+export type ShoppingItemStatusName = 'IDEA' | 'PLANNED' | 'TO_BUY' | 'BOUGHT' | 'CANCELED';
 
-export const STATUS_LABELS = {
-  idea: "Ideia",
-  planned: "Planejado",
-  to_buy: "Para Comprar",
-  bought: "Comprado",
-  canceled: "Cancelado",
-} as const;
+export type ShoppingItemCategoryName = 'TECH' | 'HEALTH' | 'MAKEUP' | 'OTHER';
 
-export const CATEGORY = {
-  tech: "tech",
-  health: "saúde",
-  makeup: "maquiagem",
-  others: "outros",
-} as const;
+export interface ShoppingItemStatus {
+  id: number;
+  name: ShoppingItemStatusName;
+  color: string;
+}
 
-export type Status = (typeof STATUS)[keyof typeof STATUS];
-export type Category = keyof typeof CATEGORY;
+export interface ShoppingItemCategory {
+  id: number;
+  name: ShoppingItemCategoryName;
+  color: string;
+  createdAt?: string;
+}
 
 export interface ShoppingItem {
-    id: string;
-    title: string;
-    link: string;
-    category: Category;
-    price: string;
-    status: Status;
-    createdAt: Date;
-    updatedAt: Date;
+  id: number;
+  title: string;
+  link: string;
+  price: number;
+  category: ShoppingItemCategory;
+  status: ShoppingItemStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface NewShoppingItemDTO {
+  title: string;
+  link: string;
+  price: number;
+  categoryId: number;
+  statusId: number;
+}
+
+export interface UpdateShoppingItemDTO {
+  title?: string;
+  link?: string;
+  price?: number;
+  categoryId?: number;
+  statusId?: number;
+}
+
+export interface NewShoppingItemCategoryDTO {
+  name: ShoppingItemCategoryName;
+  color: string;
+}
+
+export interface ShoppingItemFilters {
+  statusId?: number;
+  categoryId?: number;
 }
