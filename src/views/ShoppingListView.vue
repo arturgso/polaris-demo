@@ -59,7 +59,7 @@ onMounted(() => {
 
   <div
     v-else
-    class="grid w-full grid-cols-3 gap-2"
+    class="grid w-full grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3"
   >
     <div
       v-for="item in shoppingItems"
