@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { EllipsisVertical, ExternalLink, Pencil, Trash2 } from 'lucide-vue-next';
-import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { ref } from 'vue';
+import { useClickOutside } from '../../composables/useClickOutside';
 import type { ShoppingItem } from '../../types/ShoppingList';
 
 defineProps<{
@@ -42,22 +43,8 @@ function handleDelete(item: ShoppingItem) {
   isMenuOpen.value = false;
 }
 
-function handleDocumentClick(event: MouseEvent) {
-  const target = event.target;
-
-  if (!(target instanceof Node) || !menuRef.value || menuRef.value.contains(target)) {
-    return;
-  }
-
+useClickOutside(menuRef, () => {
   isMenuOpen.value = false;
-}
-
-onMounted(() => {
-  document.addEventListener('click', handleDocumentClick);
-});
-
-onBeforeUnmount(() => {
-  document.removeEventListener('click', handleDocumentClick);
 });
 </script>
 
