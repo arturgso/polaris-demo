@@ -48,7 +48,7 @@ useClickOutside(dropdownRef, () => {
 
     <div
       v-if="isOpen"
-      class="absolute right-0 top-12 z-20 flex w-48 flex-col gap-1 rounded-md border-2 border-border bg-surface p-2 shadow-xl"
+      class="absolute left-0 top-12 z-20 flex w-48 max-w-[calc(100vw-2rem)] flex-col gap-1 rounded-md border-2 border-border bg-surface p-2 shadow-xl sm:left-auto sm:right-0"
     >
       <button
         v-for="item in items"

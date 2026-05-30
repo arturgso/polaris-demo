@@ -5,7 +5,7 @@ import type { LucideProps } from 'lucide-vue-next';
 const props = withDefaults(defineProps<{
   modelValue: string | number;
   label?: string;
-  type?: 'text' | 'url' | 'number' | 'search';
+  type?: 'email' | 'number' | 'password' | 'search' | 'text' | 'url';
   placeholder?: string;
   required?: boolean;
   min?: string;

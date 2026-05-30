@@ -59,7 +59,7 @@ function updateColorFromEvent(event: Event) {
       required
       @update:model-value="updateField('price', Number($event))"
     />
-    <div class="grid grid-cols-2 gap-3">
+    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
       <BaseSelect
         :model-value="modelValue.categoryId"
         label="Categoria"
@@ -108,7 +108,7 @@ function updateColorFromEvent(event: Event) {
     >
       {{ errorMessage }}
     </p>
-    <div class="flex justify-end gap-2">
+    <div class="flex flex-wrap justify-end gap-2">
       <BaseButton
         type="button"
         variant="secondary"

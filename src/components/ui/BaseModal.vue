@@ -20,7 +20,7 @@ const emit = defineEmits<{
       @click.self="emit('close')"
     >
       <section
-        class="w-full max-w-lg rounded-md border-2 border-border bg-card shadow-2xl"
+        class="flex max-h-[calc(100dvh-2rem)] w-full max-w-lg flex-col rounded-md border-2 border-border bg-card shadow-2xl"
         role="dialog"
         aria-modal="true"
         :aria-label="title"
@@ -39,13 +39,13 @@ const emit = defineEmits<{
           </button>
         </header>
 
-        <div class="p-4">
+        <div class="min-h-0 overflow-y-auto p-4">
           <slot />
         </div>
 
         <footer
           v-if="$slots.footer"
-          class="flex justify-end gap-2 border-t border-border p-4"
+          class="flex flex-wrap justify-end gap-2 border-t border-border p-4"
         >
           <slot name="footer" />
         </footer>

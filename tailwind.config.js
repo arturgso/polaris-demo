@@ -7,27 +7,26 @@ export default {
   theme: {
     extend: {
       colors: {
-        bg: "#18181B",
-        surface: "#202024",
-        card: "#27272A",
+        bg: "rgb(var(--color-bg) / <alpha-value>)",
+        surface: "rgb(var(--color-surface) / <alpha-value>)",
+        card: "rgb(var(--color-card) / <alpha-value>)",
 
-        border: "#3A3A40",
+        border: "rgb(var(--color-border) / <alpha-value>)",
 
-        accent: "#E6B94C",
-        "accent-hover": "#F0C766",
+        accent: "rgb(var(--color-accent) / <alpha-value>)",
+        "accent-hover": "rgb(var(--color-accent-hover) / <alpha-value>)",
 
         text: {
-          primary: "#F4F4F5",
-          secondary: "#B3B3BA",
-          muted: "#7C7C84",
+          primary: "rgb(var(--color-text-primary) / <alpha-value>)",
+          secondary: "rgb(var(--color-text-secondary) / <alpha-value>)",
+          muted: "rgb(var(--color-text-muted) / <alpha-value>)",
         },
 
-        success: "#6FA66F",
-        warning: "#D9A441",
-        info: "#7292B8",
+        success: "rgb(var(--color-success) / <alpha-value>)",
+        warning: "rgb(var(--color-warning) / <alpha-value>)",
+        info: "rgb(var(--color-info) / <alpha-value>)",
       }
     },
   },
   plugins: [],
 };
-

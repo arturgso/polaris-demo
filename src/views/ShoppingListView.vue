@@ -284,7 +284,7 @@ watch(searchTerm, () => {
 
       <div
         v-else
-        class="grid w-full grid-cols-1 justify-items-center gap-5 md:grid-cols-2 xl:grid-cols-3"
+        class="grid w-full grid-cols-[repeat(auto-fit,minmax(min(100%,20rem),24rem))] justify-center gap-5"
       >
         <div
           v-for="item in filteredShoppingItems"
