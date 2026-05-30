@@ -1,10 +1,18 @@
 <script setup lang="ts">
-import { EllipsisVertical, ExternalLink } from 'lucide-vue-next';
+import { EllipsisVertical, ExternalLink, Pencil, Trash2 } from 'lucide-vue-next';
+import { ref } from 'vue';
 import type { ShoppingItem } from '../../types/ShoppingList';
 
 defineProps<{
   item: ShoppingItem;
 }>();
+
+const emit = defineEmits<{
+  edit: [item: ShoppingItem];
+  delete: [item: ShoppingItem];
+}>();
+
+const isMenuOpen = ref<boolean>(false);
 
 const currencyFormatter = new Intl.NumberFormat('pt-BR', {
   style: 'currency',
@@ -22,6 +30,16 @@ function badgeStyle(color: string) {
 function formatPrice(price: number) {
   return currencyFormatter.format(price);
 }
+
+function handleEdit(item: ShoppingItem) {
+  emit('edit', item);
+  isMenuOpen.value = false;
+}
+
+function handleDelete(item: ShoppingItem) {
+  emit('delete', item);
+  isMenuOpen.value = false;
+}
 </script>
 
 <template>
@@ -30,9 +48,33 @@ function formatPrice(price: number) {
       type="button"
       class="absolute right-2 top-2 rounded-md p-1 text-text-muted transition duration-150 hover:bg-surface hover:text-text-primary"
       aria-label="Opcoes do item"
+      :aria-expanded="isMenuOpen"
+      @click="isMenuOpen = !isMenuOpen"
     >
       <EllipsisVertical :size="18" />
     </button>
+
+    <div
+      v-if="isMenuOpen"
+      class="absolute right-2 top-10 z-10 flex w-36 flex-col rounded-md border-2 border-border bg-surface p-1 shadow-xl"
+    >
+      <button
+        type="button"
+        class="flex items-center gap-2 rounded-sm px-3 py-2 text-left text-sm text-text-secondary transition duration-150 hover:bg-card hover:text-text-primary"
+        @click="handleEdit(item)"
+      >
+        <Pencil :size="14" />
+        Editar
+      </button>
+      <button
+        type="button"
+        class="flex items-center gap-2 rounded-sm px-3 py-2 text-left text-sm text-text-secondary transition duration-150 hover:bg-card hover:text-text-primary"
+        @click="handleDelete(item)"
+      >
+        <Trash2 :size="14" />
+        Deletar
+      </button>
+    </div>
 
     <div class="flex flex-wrap items-center gap-2 pr-7">
       <span
