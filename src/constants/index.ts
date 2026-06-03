@@ -4,7 +4,3 @@ export {
   MOCK_AUTH_STORAGE_KEY,
   type MockAuthSession,
 } from './mockAuth';
-export {
-  DEFAULT_SHOPPING_ITEM_COLOR,
-  SHOPPING_ITEM_COLORS,
-} from './shoppingItemColors';

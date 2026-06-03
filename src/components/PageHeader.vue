@@ -8,7 +8,6 @@ import {
   useClickOutside,
   usePageHeader,
 } from '../composables';
-import { DEFAULT_SHOPPING_ITEM_COLOR } from '../constants';
 import {
   createGift,
   createPerson,
@@ -71,7 +70,6 @@ const emptyShoppingItemForm: ShoppingItemFormData = {
   title: '',
   link: '',
   price: 0,
-  color: DEFAULT_SHOPPING_ITEM_COLOR,
   categoryId: 0,
   statusId: 0,
 };
@@ -133,6 +131,7 @@ const displayTitle = computed(() => {
 
   return 'Dashboard';
 });
+const isDashboardHeader = computed(() => route.name === 'dashboard');
 
 function resetGiftForm() {
   giftForm.value = {
@@ -291,10 +290,20 @@ useClickOutside(newMenuRef, () => {
 </script>
 
 <template>
-  <header class="relative z-30 w-full border-b-2 border-border bg-surface px-4 pb-4 pt-20 sm:px-6 lg:min-h-16 lg:px-10 lg:py-3 xl:px-12">
-    <div class="mx-auto flex h-full w-full max-w-7xl flex-col gap-4 lg:relative lg:block lg:min-h-10">
-      <div class="flex min-w-0 flex-col gap-1 lg:absolute lg:left-0 lg:top-1/2 lg:max-w-[18rem] lg:-translate-y-1/2">
-        <h1 class="truncate text-2xl font-bold text-text-secondary">
+  <header class="relative z-30 w-full border-b-2 border-border bg-surface px-4 pb-4 pt-16 sm:px-6 lg:min-h-16 lg:px-10 lg:py-3 xl:px-12">
+    <div
+      :class="[
+        'mx-auto flex h-full w-full max-w-7xl gap-3 lg:relative lg:block lg:min-h-10',
+        isDashboardHeader ? 'flex-row items-center justify-between' : 'flex-col'
+      ]"
+    >
+      <div
+        :class="[
+          'flex min-w-0 flex-col gap-1 lg:absolute lg:left-0 lg:top-1/2 lg:max-w-[18rem] lg:-translate-y-1/2',
+          isDashboardHeader ? 'flex-1' : ''
+        ]"
+      >
+        <h1 class="truncate text-xl font-bold text-text-secondary sm:text-2xl">
           {{ displayTitle }}
         </h1>
         <p
@@ -314,9 +323,13 @@ useClickOutside(newMenuRef, () => {
         class="w-full lg:absolute lg:left-1/2 lg:top-1/2 lg:w-[min(28rem,36vw)] lg:-translate-x-1/2 lg:-translate-y-1/2"
         @update:model-value="pageHeaderState.onSearchTermChange?.(String($event))"
       />
-      <div v-else />
 
-      <div class="flex flex-wrap items-center gap-2 lg:absolute lg:right-0 lg:top-1/2 lg:-translate-y-1/2 lg:flex-nowrap lg:justify-end">
+      <div
+        :class="[
+          'flex flex-wrap items-center gap-2 lg:absolute lg:right-0 lg:top-1/2 lg:-translate-y-1/2 lg:flex-nowrap lg:justify-end',
+          isDashboardHeader ? 'shrink-0 justify-end' : ''
+        ]"
+      >
         <ShoppingFilterDropdown
           v-for="filter in pageHeaderState.filters"
           :key="filter.title"

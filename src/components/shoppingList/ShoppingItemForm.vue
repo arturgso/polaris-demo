@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { BaseButton, BaseSelect, BaseTextField } from '@/components';
-import { SHOPPING_ITEM_COLORS } from '@/constants';
 import type { ShoppingItemCategory, ShoppingItemFormData, ShoppingItemStatus } from '@/types';
 
 const props = defineProps<{
@@ -24,9 +23,6 @@ function updateField<Key extends keyof ShoppingItemFormData>(key: Key, value: Sh
   });
 }
 
-function updateColorFromEvent(event: Event) {
-  updateField('color', (event.target as HTMLInputElement).value);
-}
 </script>
 
 <template>
@@ -71,33 +67,6 @@ function updateColorFromEvent(event: Event) {
         required
         @update:model-value="updateField('statusId', $event)"
       />
-    </div>
-    <div class="flex flex-col gap-2 text-sm font-semibold text-text-secondary">
-      <span>Cor</span>
-      <div class="flex flex-wrap items-center gap-2">
-        <button
-          v-for="color in SHOPPING_ITEM_COLORS"
-          :key="color"
-          type="button"
-          class="h-8 w-8 rounded-md border-2 border-border outline-none transition duration-150 hover:border-accent focus:border-accent"
-          :class="modelValue.color === color ? 'border-accent ring-2 ring-accent/30' : ''"
-          :style="{ backgroundColor: color }"
-          :aria-label="`Selecionar cor ${color}`"
-          @click="updateField('color', color)"
-        />
-        <label
-          class="relative h-8 w-8 cursor-pointer overflow-hidden rounded-md border-2 border-border transition duration-150 hover:border-accent focus-within:border-accent"
-          :class="!SHOPPING_ITEM_COLORS.includes(modelValue.color) ? 'border-accent ring-2 ring-accent/30' : ''"
-          aria-label="Escolher cor personalizada"
-        >
-          <input
-            :value="modelValue.color"
-            type="color"
-            class="h-full w-full cursor-pointer border-0 bg-transparent p-0"
-            @input="updateColorFromEvent"
-          >
-        </label>
-      </div>
     </div>
     <p
       v-if="errorMessage"

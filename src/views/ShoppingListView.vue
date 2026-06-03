@@ -10,7 +10,6 @@ import {
   ShoppingItemForm,
 } from '@/components';
 import { showErrorToast, showSuccessToast, usePageHeader } from '@/composables';
-import { DEFAULT_SHOPPING_ITEM_COLOR } from '@/constants';
 import {
   deleteShoppingItem,
   getShoppingItemCategories,
@@ -46,7 +45,6 @@ const emptyForm: ShoppingItemFormData = {
   title: '',
   link: '',
   price: 0,
-  color: DEFAULT_SHOPPING_ITEM_COLOR,
   categoryId: 0,
   statusId: 0,
 };
@@ -124,7 +122,6 @@ function openEditModal(item: ShoppingItem) {
     title: item.title,
     link: item.link,
     price: item.price,
-    color: item.color ?? DEFAULT_SHOPPING_ITEM_COLOR,
     categoryId: item.category.id,
     statusId: item.status.id,
   };
