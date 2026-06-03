@@ -25,6 +25,7 @@ import {
 import type {
   Event,
   Gift,
+  GiftFilters,
   GiftFormData,
   GiftStatus,
   GiftWithPersonId,
@@ -60,6 +61,7 @@ const personToEdit = ref<Person | null>(null);
 const personToDelete = ref<Person | null>(null);
 const { resetPageHeader, setPageHeader } = usePageHeader();
 let requestId = 0;
+let searchTimeoutId: ReturnType<typeof setTimeout> | undefined;
 
 const emptyPersonForm: PersonFormData = {
   name: '',
@@ -76,11 +78,7 @@ const giftForm = ref<GiftFormData>({
 });
 const personForm = ref<PersonFormData>({ ...emptyPersonForm });
 
-const currentPersonId = computed(() => {
-  const routePersonId = Number(route.params.personId);
-
-  return Number.isFinite(routePersonId) && routePersonId > 0 ? routePersonId : undefined;
-});
+const currentPersonId = computed(() => getQueryId(route.query.personId));
 
 const isPersonPage = computed(() => currentPersonId.value !== undefined);
 
@@ -92,40 +90,7 @@ const pageTitle = computed(() => {
   return 'Presentes';
 });
 
-const filteredPersonGifts = computed(() => filterGifts(personGifts.value));
-
-const filteredGiftColumns = computed(() => {
-  return giftColumns.value
-    .map((column) => ({
-      ...column,
-      gifts: filterGifts(column.gifts),
-    }))
-    .filter((column) => column.gifts.length > 0 || searchTerm.value.trim() === '');
-});
-
 const hasActiveFilters = computed(() => selectedEventIds.value.length > 0 || selectedStatusIds.value.length > 0);
-
-function getNamesFromIds(items: Array<{ id: number; name: string }>, ids: number[]) {
-  return ids
-    .map((id) => items.find((item) => item.id === id)?.name)
-    .filter((name): name is string => Boolean(name));
-}
-
-function filterGifts(gifts: GiftWithPersonId[]) {
-  const normalizedSearch = searchTerm.value.trim().toLowerCase();
-  const selectedEvents = getNamesFromIds(events.value, selectedEventIds.value);
-  const selectedStatuses = getNamesFromIds(statuses.value, selectedStatusIds.value);
-
-  return gifts.filter((gift) => {
-    const matchesSearch = normalizedSearch === ''
-      || gift.title.toLowerCase().includes(normalizedSearch)
-      || (gift.link ?? '').toLowerCase().includes(normalizedSearch);
-    const matchesEvent = selectedEvents.length === 0 || selectedEvents.includes(gift.event ?? '');
-    const matchesStatus = selectedStatuses.length === 0 || selectedStatuses.includes(gift.status ?? '');
-
-    return matchesSearch && matchesEvent && matchesStatus;
-  });
-}
 
 function toGiftWithPersonId(gift: Gift, personId: number): GiftWithPersonId {
   return {
@@ -134,20 +99,57 @@ function toGiftWithPersonId(gift: Gift, personId: number): GiftWithPersonId {
   };
 }
 
+function getQueryId(value: unknown) {
+  const queryValue = Array.isArray(value) ? value[0] : value;
+  const parsedValue = Number(queryValue);
+
+  return Number.isFinite(parsedValue) && parsedValue > 0 ? parsedValue : undefined;
+}
+
+function getSelectedId(ids: number[]) {
+  return ids.length === 1 ? ids[0] : undefined;
+}
+
+function getGiftFilters(): GiftFilters {
+  const title = searchTerm.value.trim();
+
+  return {
+    title: title || undefined,
+    eventId: getSelectedId(selectedEventIds.value),
+    statusId: getSelectedId(selectedStatusIds.value),
+  };
+}
+
 function toggleFilter(filterValues: number[], value: number) {
-  const currentIndex = filterValues.indexOf(value);
+  const queryKey = filterValues === selectedEventIds.value ? 'eventId' : 'statusId';
+  const currentId = getSelectedId(filterValues);
 
-  if (currentIndex >= 0) {
-    filterValues.splice(currentIndex, 1);
-    return;
-  }
+  void router.replace({
+    path: '/gifts',
+    query: {
+      ...route.query,
+      [queryKey]: currentId === value ? undefined : value,
+    },
+  });
+}
 
-  filterValues.push(value);
+function syncFiltersFromRoute() {
+  const eventId = getQueryId(route.query.eventId);
+  const statusId = getQueryId(route.query.statusId);
+
+  selectedEventIds.value = eventId ? [eventId] : [];
+  selectedStatusIds.value = statusId ? [statusId] : [];
 }
 
 function clearFilters() {
-  selectedEventIds.value = [];
-  selectedStatusIds.value = [];
+  void router.replace({
+    path: '/gifts',
+    query: {
+      ...route.query,
+      eventId: undefined,
+      statusId: undefined,
+    },
+  });
 }
 
 function openEditGiftModal(gift: GiftWithPersonId) {
@@ -216,9 +218,10 @@ async function loadGiftsPage() {
 
     persons.value = loadedPersons;
     selectedPerson.value = loadedSelectedPerson;
+    const filters = getGiftFilters();
 
     if (currentPersonId.value) {
-      const gifts = await getGiftsByPerson(currentPersonId.value);
+      const gifts = await getGiftsByPerson(currentPersonId.value, filters);
 
       if (currentRequestId === requestId) {
         personGifts.value = gifts.map((gift) => toGiftWithPersonId(gift, currentPersonId.value as number));
@@ -231,7 +234,7 @@ async function loadGiftsPage() {
     const giftsByPerson = await Promise.all(
       loadedPersons.map(async (person) => ({
         person,
-        gifts: (await getGiftsByPerson(person.id)).map((gift) => toGiftWithPersonId(gift, person.id)),
+        gifts: (await getGiftsByPerson(person.id, filters)).map((gift) => toGiftWithPersonId(gift, person.id)),
       })),
     );
 
@@ -356,21 +359,32 @@ async function confirmDeletePerson() {
 
 onMounted(() => {
   void loadOptions();
-  void loadGiftsPage();
   window.addEventListener('polaris:gifts-changed', loadGiftsPage);
 });
 
 onUnmounted(() => {
+  if (searchTimeoutId) {
+    clearTimeout(searchTimeoutId);
+  }
+
   window.removeEventListener('polaris:gifts-changed', loadGiftsPage);
   resetPageHeader();
 });
 
-watch(
-  () => route.params.personId,
-  () => {
+watch(() => route.query, () => {
+  syncFiltersFromRoute();
+  void loadGiftsPage();
+}, { immediate: true });
+
+watch(searchTerm, () => {
+  if (searchTimeoutId) {
+    clearTimeout(searchTimeoutId);
+  }
+
+  searchTimeoutId = setTimeout(() => {
     void loadGiftsPage();
-  },
-);
+  }, 300);
+});
 
 watchEffect(() => {
   setPageHeader({
@@ -456,18 +470,14 @@ watchEffect(() => {
     <template v-else-if="isPersonPage">
       <BaseEmptyState
         v-if="personGifts.length === 0"
-        message="Nenhum presente encontrado para esta pessoa."
-      />
-      <BaseEmptyState
-        v-else-if="filteredPersonGifts.length === 0"
-        message="Nenhum presente encontrado para os filtros atuais."
+        :message="hasActiveFilters || searchTerm.trim() ? 'Nenhum presente encontrado para os filtros atuais.' : 'Nenhum presente encontrado para esta pessoa.'"
       />
       <div
         v-else
         class="grid w-full grid-cols-[repeat(auto-fit,minmax(min(100%,20rem),24rem))] items-start gap-5"
       >
         <GiftCard
-          v-for="gift in filteredPersonGifts"
+          v-for="gift in personGifts"
           :key="gift.id"
           :gift="gift"
           @edit="openEditGiftModal(gift)"
@@ -482,7 +492,7 @@ watchEffect(() => {
         message="Nenhum presente encontrado."
       />
       <BaseEmptyState
-        v-else-if="filteredGiftColumns.length === 0"
+        v-else-if="(hasActiveFilters || searchTerm.trim()) && giftColumns.every((column) => column.gifts.length === 0)"
         message="Nenhum presente encontrado para os filtros atuais."
       />
       <div
@@ -490,7 +500,7 @@ watchEffect(() => {
         class="grid w-full grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))] items-start gap-5"
       >
         <section
-          v-for="column in filteredGiftColumns"
+          v-for="column in giftColumns"
           :key="column.person.id"
           class="flex min-w-0 flex-col gap-3"
         >
@@ -498,7 +508,7 @@ watchEffect(() => {
             <button
               type="button"
               class="min-w-0 truncate text-left text-sm font-bold text-text-primary transition duration-150 hover:text-accent"
-              @click="router.push(`/gifts/${column.person.id}`)"
+              @click="router.push({ path: '/gifts', query: { personId: column.person.id } })"
             >
               {{ column.person.name }}
             </button>

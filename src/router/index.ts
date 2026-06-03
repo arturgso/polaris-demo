@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory } from 'vue-router';
+import { createRouter, createWebHistory } from 'vue-router';
 import { MOCK_AUTH_STORAGE_KEY } from '@/constants';
 import {
   DashboardView,
@@ -39,14 +39,6 @@ const routes = [
     },
   },
   {
-    path: '/gifts/:personId',
-    name: 'personGifts',
-    component: GiftsView,
-    meta: {
-      requiresAuth: true,
-    },
-  },
-  {
     path: '/settings',
     name: 'settings',
     component: SettingsView,
@@ -57,7 +49,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes,
 });
 

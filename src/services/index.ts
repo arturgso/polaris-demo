@@ -9,6 +9,7 @@ export {
 export {
   createGift,
   deleteGift,
+  getGifts,
   getGiftsByPerson,
   updateGift,
 } from './gifts';

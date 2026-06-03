@@ -3,19 +3,21 @@ import { Gift, LayoutDashboard, LogOut, Settings, ShoppingCart, Sidebar } from '
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { MOCK_AUTH_STORAGE_KEY } from '@/constants';
-import { eventsButtons } from '@/mocks';
-import { getPersons, getShoppingItemCategories } from '@/services';
-import type { Person, ShoppingItemCategory } from '@/types';
+import { getEvents, getPersons, getShoppingItemCategories } from '@/services';
+import type { Event, Person, ShoppingItemCategory } from '@/types';
 import { Divider, SidebarButton, SidebarSection } from '@/components/ui/sidebar';
 
 const router = useRouter();
 const isCollapsed = ref<boolean>(false);
 const shoppingCategories = ref<ShoppingItemCategory[]>([]);
 const persons = ref<Person[]>([]);
+const events = ref<Event[]>([]);
 const isLoadingCategories = ref<boolean>(false);
 const isLoadingPersons = ref<boolean>(false);
+const isLoadingEvents = ref<boolean>(false);
 const categoriesErrorMessage = ref<string>('');
 const personsErrorMessage = ref<string>('');
+const eventsErrorMessage = ref<string>('');
 
 const props = withDefaults(defineProps<{
   isDrawer?: boolean;
@@ -69,6 +71,19 @@ async function loadPersons() {
   }
 }
 
+async function loadEvents() {
+  isLoadingEvents.value = true;
+  eventsErrorMessage.value = '';
+
+  try {
+    events.value = await getEvents();
+  } catch {
+    eventsErrorMessage.value = 'Nao foi possivel carregar eventos.';
+  } finally {
+    isLoadingEvents.value = false;
+  }
+}
+
 function handleLogout() {
   localStorage.removeItem(MOCK_AUTH_STORAGE_KEY);
   void router.push('/login');
@@ -77,6 +92,7 @@ function handleLogout() {
 onMounted(() => {
   void loadShoppingCategories();
   void loadPersons();
+  void loadEvents();
   window.addEventListener('polaris:persons-changed', loadPersons);
 });
 
@@ -241,7 +257,7 @@ onUnmounted(() => {
                 :use-random-color="true"
                 :title="person.name"
                 :is-collapsed="isContentCollapsed"
-                :route-to="`/gifts/${person.id}`"
+                :route-to="{ path: '/gifts', query: { personId: person.id } }"
               />
             </div>
           </template>
@@ -257,16 +273,45 @@ onUnmounted(() => {
       >
         <div :class="['flex flex-col', isContentCollapsed ? 'gap-2' : 'gap-1']">
           <div
-            v-for="button in eventsButtons"
-            :key="button.title"
+            v-if="isLoadingEvents"
+            :class="[
+              'text-xs text-text-muted',
+              isContentCollapsed ? 'h-8 w-8 rounded-md bg-card' : 'px-2 py-1'
+            ]"
           >
-            <SidebarButton
-              :icon="button.icon"
-              :title="button.title"
-              :is-collapsed="isContentCollapsed"
-              :route-to="button.title"
-            />
+            <span v-if="!isContentCollapsed">Carregando...</span>
           </div>
+          <div
+            v-else-if="eventsErrorMessage"
+            :class="[
+              'text-xs text-text-muted',
+              isContentCollapsed ? 'h-8 w-8 rounded-md bg-card' : 'px-2 py-1'
+            ]"
+          >
+            <span v-if="!isContentCollapsed">{{ eventsErrorMessage }}</span>
+          </div>
+          <div
+            v-else-if="events.length === 0"
+            :class="[
+              'text-xs text-text-muted',
+              isContentCollapsed ? 'h-8 w-8 rounded-md bg-card' : 'px-2 py-1'
+            ]"
+          >
+            <span v-if="!isContentCollapsed">Nenhum evento</span>
+          </div>
+          <template v-else>
+            <div
+              v-for="event in events"
+              :key="event.id"
+            >
+              <SidebarButton
+                :title="event.name"
+                :color="event.color"
+                :is-collapsed="isContentCollapsed"
+                :route-to="{ path: '/gifts', query: { eventId: event.id } }"
+              />
+            </div>
+          </template>
         </div>
       </SidebarSection>
     </div>

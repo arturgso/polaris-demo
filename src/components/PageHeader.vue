@@ -118,7 +118,7 @@ const displayTitle = computed(() => {
     return 'Lista de compras';
   }
 
-  if (route.name === 'gifts' || route.name === 'personGifts') {
+  if (route.name === 'gifts') {
     return 'Presentes';
   }
 

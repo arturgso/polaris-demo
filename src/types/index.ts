@@ -5,6 +5,7 @@ export type {
 export type {
   Event,
   Gift,
+  GiftFilters,
   GiftFormData,
   GiftStatus,
   GiftWithPersonId,
