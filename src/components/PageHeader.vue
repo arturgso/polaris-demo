@@ -279,7 +279,7 @@ useClickOutside(newMenuRef, () => {
 </script>
 
 <template>
-  <header class="w-full border-b-2 border-border bg-surface px-4 pb-4 pt-20 sm:px-6 lg:min-h-16 lg:px-10 lg:py-3 xl:px-12">
+  <header class="relative z-30 w-full border-b-2 border-border bg-surface px-4 pb-4 pt-20 sm:px-6 lg:min-h-16 lg:px-10 lg:py-3 xl:px-12">
     <div class="mx-auto flex h-full w-full max-w-7xl flex-col gap-4 lg:relative lg:block lg:min-h-10">
       <div class="flex min-w-0 flex-col gap-1 lg:absolute lg:left-0 lg:top-1/2 lg:max-w-[18rem] lg:-translate-y-1/2">
         <h1 class="truncate text-2xl font-bold text-text-secondary">
@@ -341,7 +341,7 @@ useClickOutside(newMenuRef, () => {
 
           <div
             v-if="isNewMenuOpen"
-            class="absolute right-0 top-12 z-20 flex w-48 flex-col gap-1 rounded-md border-2 border-border bg-surface p-2 shadow-xl"
+            class="absolute right-0 top-12 z-50 flex w-48 flex-col gap-1 rounded-md border-2 border-border bg-surface p-2 shadow-xl"
           >
             <button
               v-for="option in creationOptions"
