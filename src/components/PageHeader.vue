@@ -339,25 +339,27 @@ useClickOutside(newMenuRef, () => {
             Novo
           </BaseButton>
 
-          <div
-            v-if="isNewMenuOpen"
-            class="absolute right-0 top-12 z-50 flex w-48 flex-col gap-1 rounded-md border-2 border-border bg-surface p-2 shadow-xl"
-          >
-            <button
-              v-for="option in creationOptions"
-              :key="option.type"
-              type="button"
-              class="flex items-center gap-2 rounded-sm px-2 py-2 text-left text-sm text-text-secondary transition duration-150 hover:bg-card hover:text-text-primary"
-              @click="openCreation(option.type)"
+          <Transition name="fade-scale">
+            <div
+              v-if="isNewMenuOpen"
+              class="absolute right-0 top-12 z-50 flex w-48 origin-top-right flex-col gap-1 rounded-md border-2 border-border bg-surface p-2 shadow-xl"
             >
-              <component
-                :is="option.icon"
-                :size="16"
-                class="shrink-0"
-              />
-              {{ option.label }}
-            </button>
-          </div>
+              <button
+                v-for="option in creationOptions"
+                :key="option.type"
+                type="button"
+                class="interactive-nudge flex items-center gap-2 rounded-sm px-2 py-2 text-left text-sm text-text-secondary hover:bg-card hover:text-text-primary"
+                @click="openCreation(option.type)"
+              >
+                <component
+                  :is="option.icon"
+                  :size="16"
+                  class="shrink-0"
+                />
+                {{ option.label }}
+              </button>
+            </div>
+          </Transition>
         </div>
       </div>
     </div>

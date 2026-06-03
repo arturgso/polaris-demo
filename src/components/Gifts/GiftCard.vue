@@ -34,7 +34,7 @@ useClickOutside(menuRef, () => {
 <template>
   <article
     ref="menuRef"
-    class="relative flex h-48 flex-col gap-5 rounded-md border-2 border-border bg-card p-5 transition duration-150 hover:border-accent"
+    class="interactive-lift relative flex h-48 flex-col gap-5 rounded-md border-2 border-border bg-card p-5 hover:border-accent"
   >
     <button
       type="button"
@@ -46,27 +46,29 @@ useClickOutside(menuRef, () => {
       <EllipsisVertical :size="18" />
     </button>
 
-    <div
-      v-if="isMenuOpen"
-      class="absolute right-2 top-10 z-10 flex w-36 flex-col rounded-md border-2 border-border bg-surface p-1 shadow-xl"
-    >
-      <button
-        type="button"
-        class="flex items-center gap-2 rounded-sm px-3 py-2 text-left text-sm text-text-secondary transition duration-150 hover:bg-card hover:text-text-primary"
-        @click="handleEdit(gift)"
+    <Transition name="fade-scale">
+      <div
+        v-if="isMenuOpen"
+        class="absolute right-2 top-10 z-10 flex w-36 origin-top-right flex-col rounded-md border-2 border-border bg-surface p-1 shadow-xl"
       >
-        <Pencil :size="14" />
-        Editar
-      </button>
-      <button
-        type="button"
-        class="flex items-center gap-2 rounded-sm px-3 py-2 text-left text-sm text-text-secondary transition duration-150 hover:bg-card hover:text-text-primary"
-        @click="handleDelete(gift)"
-      >
-        <Trash2 :size="14" />
-        Deletar
-      </button>
-    </div>
+        <button
+          type="button"
+          class="interactive-nudge flex items-center gap-2 rounded-sm px-3 py-2 text-left text-sm text-text-secondary hover:bg-card hover:text-text-primary"
+          @click="handleEdit(gift)"
+        >
+          <Pencil :size="14" />
+          Editar
+        </button>
+        <button
+          type="button"
+          class="interactive-nudge flex items-center gap-2 rounded-sm px-3 py-2 text-left text-sm text-text-secondary hover:bg-card hover:text-text-primary"
+          @click="handleDelete(gift)"
+        >
+          <Trash2 :size="14" />
+          Deletar
+        </button>
+      </div>
+    </Transition>
 
     <div class="flex flex-wrap items-center gap-2 pr-7">
       <span class="w-fit rounded-sm border border-border bg-surface px-2 py-1 text-[11px] font-semibold uppercase text-text-secondary">

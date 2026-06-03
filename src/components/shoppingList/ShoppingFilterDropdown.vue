@@ -46,32 +46,34 @@ useClickOutside(dropdownRef, () => {
       </span>
     </button>
 
-    <div
-      v-if="isOpen"
-      class="absolute left-0 top-12 z-20 flex w-48 max-w-[calc(100vw-2rem)] flex-col gap-1 rounded-md border-2 border-border bg-surface p-2 shadow-xl sm:left-auto sm:right-0"
-    >
-      <button
-        v-for="item in items"
-        :key="item.id"
-        type="button"
-        class="flex items-center justify-between gap-2 rounded-sm px-2 py-2 text-left text-sm text-text-secondary transition duration-150 hover:bg-card hover:text-text-primary"
-        :class="selectedIds.includes(item.id) ? 'bg-card text-text-primary' : ''"
-        @click="emit('toggle', item.id)"
+    <Transition name="fade-scale">
+      <div
+        v-if="isOpen"
+        class="absolute left-0 top-12 z-20 flex w-48 max-w-[calc(100vw-2rem)] origin-top flex-col gap-1 rounded-md border-2 border-border bg-surface p-2 shadow-xl sm:left-auto sm:right-0 sm:origin-top-right"
       >
-        <span class="flex min-w-0 items-center gap-2">
-          <span
-            v-if="item.color"
-            class="h-3 w-3 shrink-0 rounded-sm"
-            :style="{ backgroundColor: item.color }"
+        <button
+          v-for="item in items"
+          :key="item.id"
+          type="button"
+          class="interactive-nudge flex items-center justify-between gap-2 rounded-sm px-2 py-2 text-left text-sm text-text-secondary hover:bg-card hover:text-text-primary"
+          :class="selectedIds.includes(item.id) ? 'bg-card text-text-primary' : ''"
+          @click="emit('toggle', item.id)"
+        >
+          <span class="flex min-w-0 items-center gap-2">
+            <span
+              v-if="item.color"
+              class="h-3 w-3 shrink-0 rounded-sm"
+              :style="{ backgroundColor: item.color }"
+            />
+            <span class="truncate">{{ item.name }}</span>
+          </span>
+          <Check
+            v-if="selectedIds.includes(item.id)"
+            :size="14"
+            class="shrink-0"
           />
-          <span class="truncate">{{ item.name }}</span>
-        </span>
-        <Check
-          v-if="selectedIds.includes(item.id)"
-          :size="14"
-          class="shrink-0"
-        />
-      </button>
-    </div>
+        </button>
+      </div>
+    </Transition>
   </div>
 </template>

@@ -50,13 +50,15 @@ watch(
       <Menu :size="20" />
     </button>
 
-    <button
-      v-if="isDrawerOpen"
-      type="button"
-      class="fixed inset-0 z-40 bg-bg/80 lg:hidden"
-      aria-label="Fechar menu"
-      @click="isDrawerOpen = false"
-    />
+    <Transition name="modal-overlay">
+      <button
+        v-if="isDrawerOpen"
+        type="button"
+        class="fixed inset-0 z-40 bg-bg/80 lg:hidden"
+        aria-label="Fechar menu"
+        @click="isDrawerOpen = false"
+      />
+    </Transition>
 
     <Sidebar
       :is-drawer="isCompactScreen"

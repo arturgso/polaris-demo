@@ -57,3 +57,120 @@
   --color-text-secondary: 190 190 198;
   --color-text-muted: 132 132 142;
 }
+
+@layer utilities {
+  .interactive-lift {
+    transition-duration: 150ms;
+    transition-property: border-color, box-shadow, opacity, transform, background-color, color;
+    transition-timing-function: ease-out;
+  }
+
+  .interactive-lift:hover {
+    box-shadow: 0 10px 24px rgb(0 0 0 / 0.18);
+    transform: translateY(-2px);
+  }
+
+  .interactive-nudge {
+    transition-duration: 150ms;
+    transition-property: background-color, border-color, color, transform;
+    transition-timing-function: ease-out;
+  }
+
+  .interactive-nudge:hover {
+    transform: translateX(2px);
+  }
+
+  .motion-enter {
+    animation: fade-slide-in 180ms ease-out both;
+    animation-delay: var(--motion-delay, 0ms);
+  }
+
+  .motion-card-enter {
+    animation: card-enter-in 200ms ease-out both;
+    animation-delay: var(--motion-delay, 0ms);
+  }
+}
+
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: opacity 180ms ease-out, transform 180ms ease-out;
+}
+
+.fade-slide-enter-from,
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
+.fade-scale-enter-active,
+.fade-scale-leave-active {
+  transition: opacity 180ms ease-out, transform 180ms ease-out;
+}
+
+.fade-scale-enter-from,
+.fade-scale-leave-to {
+  opacity: 0;
+  transform: translateY(-4px) scale(0.98);
+}
+
+.modal-overlay-enter-active,
+.modal-overlay-leave-active {
+  transition: opacity 180ms ease-out;
+}
+
+.modal-overlay-enter-active .modal-panel,
+.modal-overlay-leave-active .modal-panel {
+  transition: opacity 200ms ease-out, transform 200ms ease-out;
+}
+
+.modal-overlay-enter-from,
+.modal-overlay-leave-to {
+  opacity: 0;
+}
+
+.modal-overlay-enter-from .modal-panel,
+.modal-overlay-leave-to .modal-panel {
+  opacity: 0;
+  transform: translateY(8px) scale(0.98);
+}
+
+@keyframes fade-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes card-enter-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 1ms !important;
+  }
+
+  .interactive-lift:hover,
+  .interactive-nudge:hover {
+    box-shadow: none;
+    transform: none;
+  }
+}

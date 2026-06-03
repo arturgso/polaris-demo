@@ -123,7 +123,7 @@ onUnmounted(() => {
           <button
             type="button"
             :class="[
-              'rounded-md p-1 text-text-muted transition duration-150 hover:bg-card hover:text-accent',
+              'interactive-nudge rounded-md p-1 text-text-muted hover:bg-card hover:text-accent',
               isContentCollapsed ? 'mx-auto' : ''
             ]"
             aria-label="Alternar sidebar"
@@ -326,7 +326,7 @@ onUnmounted(() => {
         />
         <button
           type="button"
-          :class="[isContentCollapsed ? 'mb-2 flex w-full items-center justify-center rounded-md p-1 hover:bg-card hover:text-accent' : 'flex w-full flex-row items-center gap-2 rounded-md px-2 py-1 hover:bg-card hover:text-accent']"
+          :class="[isContentCollapsed ? 'interactive-nudge mb-2 flex w-full items-center justify-center rounded-md p-1 hover:bg-card hover:text-accent' : 'interactive-nudge flex w-full flex-row items-center gap-2 rounded-md px-2 py-1 hover:bg-card hover:text-accent']"
           @click="handleLogout"
         >
           <LogOut :size="18" />

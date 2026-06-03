@@ -116,9 +116,10 @@ watchEffect(() => {
         class="grid w-full grid-cols-1 gap-5 sm:grid-cols-[repeat(auto-fit,minmax(min(100%,16rem),18rem))] sm:justify-center"
       >
         <div
-          v-for="item in dashboardCards"
+          v-for="(item, index) in dashboardCards"
           :key="item.id"
-          class="w-full sm:max-w-72"
+          class="motion-card-enter w-full sm:max-w-72"
+          :style="{ '--motion-delay': `${index * 35}ms` }"
         >
           <DashboardCard :item="item" />
         </div>
@@ -168,8 +169,10 @@ watchEffect(() => {
             class="flex flex-col gap-2"
           >
             <div
-              v-for="item in recentShoppingItems"
+              v-for="(item, index) in recentShoppingItems"
               :key="item.id"
+              class="motion-enter"
+              :style="{ '--motion-delay': `${index * 25}ms` }"
             >
               <div class="flex items-start justify-between gap-3 border-t border-border py-3 sm:items-center sm:gap-4">
                 <div class="flex min-w-0 flex-1 flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">

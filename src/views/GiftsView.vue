@@ -476,13 +476,18 @@ watchEffect(() => {
         v-else
         class="grid w-full grid-cols-[repeat(auto-fit,minmax(min(100%,20rem),24rem))] items-start gap-5"
       >
-        <GiftCard
-          v-for="gift in personGifts"
+        <div
+          v-for="(gift, index) in personGifts"
           :key="gift.id"
-          :gift="gift"
-          @edit="openEditGiftModal(gift)"
-          @delete="openDeleteGiftModal(gift)"
-        />
+          class="motion-card-enter"
+          :style="{ '--motion-delay': `${index * 30}ms` }"
+        >
+          <GiftCard
+            :gift="gift"
+            @edit="openEditGiftModal(gift)"
+            @delete="openDeleteGiftModal(gift)"
+          />
+        </div>
       </div>
     </template>
 
@@ -500,9 +505,10 @@ watchEffect(() => {
         class="grid w-full grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))] items-start gap-5"
       >
         <section
-          v-for="column in giftColumns"
+          v-for="(column, columnIndex) in giftColumns"
           :key="column.person.id"
-          class="flex min-w-0 flex-col gap-3"
+          class="motion-card-enter flex min-w-0 flex-col gap-3"
+          :style="{ '--motion-delay': `${columnIndex * 35}ms` }"
         >
           <div class="flex items-center justify-between gap-2 rounded-md border-2 border-border bg-card p-3">
             <button
@@ -536,13 +542,18 @@ watchEffect(() => {
             v-if="column.gifts.length === 0"
             message="Sem presentes."
           />
-          <GiftCard
-            v-for="gift in column.gifts"
+          <div
+            v-for="(gift, giftIndex) in column.gifts"
             :key="gift.id"
-            :gift="gift"
-            @edit="openEditGiftModal(gift)"
-            @delete="openDeleteGiftModal(gift)"
-          />
+            class="motion-card-enter"
+            :style="{ '--motion-delay': `${(columnIndex * 35) + ((giftIndex + 1) * 25)}ms` }"
+          >
+            <GiftCard
+              :gift="gift"
+              @edit="openEditGiftModal(gift)"
+              @delete="openDeleteGiftModal(gift)"
+            />
+          </div>
         </section>
       </div>
     </template>

@@ -8,7 +8,7 @@ defineProps<{
 </script>
 
 <template>
-  <div class="h-full w-full rounded-md border-2 border-border bg-card p-6">
+  <div class="interactive-lift h-full w-full rounded-md border-2 border-border bg-card p-6 hover:border-accent">
     <div class="flex flex-row items-center justify-between">
       <h1 class="text-sm text-text-secondary uppercase">
         {{ item.title }}

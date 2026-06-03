@@ -39,7 +39,7 @@ function isRouteActive(routeTo: RouteLocationRaw) {
 <template>
   <router-link
     :to="routeTo"
-    class="group flex min-h-8 items-center gap-2 rounded-md px-2 py-1 transition duration-150"
+    class="interactive-nudge group flex min-h-8 items-center gap-2 rounded-md px-2 py-1"
     :class="[
       isCollapsed ? 'justify-center' : '',
       isRouteActive(routeTo) ? 'bg-accent font-bold text-bg hover:bg-accent-hover hover:text-bg' : 'text-text-secondary hover:bg-card hover:text-text-primary'

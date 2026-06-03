@@ -5,7 +5,7 @@ defineProps<{
 </script>
 
 <template>
-  <div class="w-full rounded-md border-2 border-border bg-card p-6 text-sm text-text-secondary">
+  <div class="motion-enter w-full rounded-md border-2 border-border bg-card p-6 text-sm text-text-secondary">
     {{ message }}
   </div>
 </template>

@@ -288,9 +288,10 @@ watchEffect(() => {
         class="grid w-full grid-cols-[repeat(auto-fit,minmax(min(100%,20rem),24rem))] justify-center gap-5"
       >
         <div
-          v-for="item in filteredShoppingItems"
+          v-for="(item, index) in filteredShoppingItems"
           :key="item.id"
-          class="w-full max-w-sm"
+          class="motion-card-enter w-full max-w-sm"
+          :style="{ '--motion-delay': `${index * 30}ms` }"
         >
           <ShoppingItemCard
             :item="item"

@@ -14,7 +14,7 @@ withDefaults(defineProps<{
   <button
     :type="type"
     :disabled="disabled"
-    class="flex h-10 items-center gap-2 rounded-md px-4 text-sm font-semibold transition duration-150 disabled:cursor-not-allowed disabled:opacity-60"
+    class="interactive-nudge flex h-10 items-center gap-2 rounded-md px-4 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60"
     :class="{
       'bg-accent text-bg hover:bg-accent-hover': variant === 'primary',
       'border-2 border-border text-text-secondary hover:border-accent hover:text-text-primary': variant === 'secondary',
