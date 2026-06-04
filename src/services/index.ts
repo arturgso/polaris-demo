@@ -43,3 +43,19 @@ export {
   getShoppingItemStatuses,
   updateShoppingItem,
 } from './shoppingItems';
+export {
+  createGiftForBeatriz,
+  createVaultGiftItem,
+  createVaultGiftList,
+  deleteVaultGiftItem,
+  deleteVaultGiftList,
+  getVaultGiftItems,
+  getVaultGiftLists,
+  hasVaultSession,
+  isBeatrizPerson,
+  lockVault,
+  moveGiftToVault,
+  unlockVault,
+  updateVaultGiftItem,
+  updateVaultGiftList,
+} from './vault';

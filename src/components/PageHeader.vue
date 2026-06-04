@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { CalendarDays, Gift, Plus, Search, ShoppingCart, Tags, User, UserPlus, X } from 'lucide-vue-next';
+import { CalendarDays, Flower2, Gift, Plus, Search, ShoppingCart, Tags, User, UserPlus, X } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
+import { BEATRIZ_PERSON_ID } from '../constants';
 import {
   showErrorToast,
   showSuccessToast,
@@ -11,6 +12,7 @@ import {
 import {
   createEvent,
   createGift,
+  createVaultGiftItem,
   createPerson,
   createShoppingItem,
   createShoppingItemCategory,
@@ -19,6 +21,7 @@ import {
   getPersons,
   getShoppingItemCategories,
   getShoppingItemStatuses,
+  getVaultGiftLists,
   signup,
 } from '../services';
 import type {
@@ -33,6 +36,8 @@ import type {
   ShoppingItemCategory,
   ShoppingItemFormData,
   ShoppingItemStatus,
+  VaultGiftFormData,
+  VaultGiftList,
 } from '../types';
 import GiftForm from './Gifts/GiftForm.vue';
 import PersonForm from './Gifts/PersonForm.vue';
@@ -40,9 +45,10 @@ import ShoppingFilterDropdown from './shoppingList/ShoppingFilterDropdown.vue';
 import ShoppingItemForm from './shoppingList/ShoppingItemForm.vue';
 import BaseButton from './ui/BaseButton.vue';
 import BaseModal from './ui/BaseModal.vue';
+import BaseSelect from './ui/BaseSelect.vue';
 import BaseTextField from './ui/BaseTextField.vue';
 
-type CreationType = 'gift' | 'person' | 'shoppingItem' | 'shoppingCategory' | 'event' | 'user';
+type CreationType = 'gift' | 'beatriz' | 'person' | 'shoppingItem' | 'shoppingCategory' | 'event' | 'user';
 
 interface NameColorFormData {
   name: string;
@@ -63,6 +69,7 @@ const activeCreationType = ref<CreationType | null>(null);
 const persons = ref<Person[]>([]);
 const events = ref<Event[]>([]);
 const giftStatuses = ref<GiftStatus[]>([]);
+const vaultGiftLists = ref<VaultGiftList[]>([]);
 const shoppingCategories = ref<ShoppingItemCategory[]>([]);
 const shoppingStatuses = ref<ShoppingItemStatus[]>([]);
 const isSaving = ref<boolean>(false);
@@ -102,6 +109,13 @@ const emptyUserForm: UserFormData = {
 };
 
 const giftForm = ref<GiftFormData>({ ...emptyGiftForm });
+const vaultGiftForm = ref<VaultGiftFormData>({
+  title: '',
+  link: '',
+  event: '',
+  status: '',
+  giftListId: 0,
+});
 const personForm = ref<PersonFormData>({ ...emptyPersonForm });
 const shoppingItemForm = ref<ShoppingItemFormData>({ ...emptyShoppingItemForm });
 const shoppingCategoryForm = ref<NameColorFormData>({ ...emptyNameColorForm });
@@ -113,6 +127,11 @@ const creationOptions = [
     type: 'gift' as const,
     label: 'Presente',
     icon: Gift,
+  },
+  {
+    type: 'beatriz' as const,
+    label: 'Beatriz',
+    icon: Flower2,
   },
   {
     type: 'person' as const,
@@ -144,6 +163,10 @@ const creationOptions = [
 const modalTitle = computed(() => {
   if (activeCreationType.value === 'gift') {
     return 'Novo presente';
+  }
+
+  if (activeCreationType.value === 'beatriz') {
+    return 'Novo presente da Beatriz';
   }
 
   if (activeCreationType.value === 'person') {
@@ -186,9 +209,23 @@ const displayTitle = computed(() => {
     return 'Aparencia';
   }
 
+  if (route.name === 'vault') {
+    return 'Cofre';
+  }
+
   return 'Dashboard';
 });
 const isDashboardHeader = computed(() => route.name === 'dashboard');
+const vaultGiftListOptions = computed(() => [
+  {
+    id: 0,
+    name: 'Sem lista',
+  },
+  ...vaultGiftLists.value.map((list) => ({
+    id: list.id,
+    name: list.name,
+  })),
+]);
 
 function resetGiftForm() {
   giftForm.value = {
@@ -197,6 +234,16 @@ function resetGiftForm() {
     personId: persons.value[0]?.id ?? 0,
     event: events.value[0]?.tag ?? '',
     status: giftStatuses.value[0]?.tag ?? '',
+  };
+}
+
+function resetVaultGiftForm() {
+  vaultGiftForm.value = {
+    title: '',
+    link: '',
+    event: events.value[0]?.tag ?? '',
+    status: giftStatuses.value[0]?.tag ?? '',
+    giftListId: 0,
   };
 }
 
@@ -267,9 +314,20 @@ async function loadGiftOptions() {
     getGiftStatuses(),
   ]);
 
-  persons.value = loadedPersons;
+  persons.value = loadedPersons.filter((person) => person.id !== BEATRIZ_PERSON_ID);
   events.value = loadedEvents;
   giftStatuses.value = loadedStatuses;
+}
+
+async function loadVaultGiftOptions() {
+  const [loadedEvents, loadedStatuses] = await Promise.all([
+    getEvents(),
+    getGiftStatuses(),
+  ]);
+
+  events.value = loadedEvents;
+  giftStatuses.value = loadedStatuses;
+  vaultGiftLists.value = getVaultGiftLists();
 }
 
 async function loadShoppingOptions() {
@@ -290,6 +348,11 @@ async function openCreation(type: CreationType) {
     if (type === 'gift') {
       await loadGiftOptions();
       resetGiftForm();
+    }
+
+    if (type === 'beatriz') {
+      await loadVaultGiftOptions();
+      resetVaultGiftForm();
     }
 
     if (type === 'person') {
@@ -339,7 +402,36 @@ async function submitGift() {
       status: giftForm.value.status || undefined,
     });
     closeCreationModal();
-    notify('polaris:gifts-changed');
+    notify(giftForm.value.personId === BEATRIZ_PERSON_ID ? 'polaris:vault-changed' : 'polaris:gifts-changed');
+    showSuccessToast('Presente salvo.');
+  } catch {
+    modalErrorMessage.value = 'Nao foi possivel salvar o presente.';
+    showErrorToast('Nao foi possivel salvar o presente.');
+  } finally {
+    isSaving.value = false;
+  }
+}
+
+function submitVaultGift() {
+  if (!vaultGiftForm.value.title.trim()) {
+    modalErrorMessage.value = 'Informe o titulo.';
+    return;
+  }
+
+  isSaving.value = true;
+  modalErrorMessage.value = '';
+
+  try {
+    createVaultGiftItem({
+      title: vaultGiftForm.value.title,
+      link: vaultGiftForm.value.link || undefined,
+      personId: BEATRIZ_PERSON_ID,
+      event: vaultGiftForm.value.event || undefined,
+      status: vaultGiftForm.value.status || undefined,
+      giftListId: vaultGiftForm.value.giftListId || undefined,
+    });
+    closeCreationModal();
+    notify('polaris:vault-changed');
     showSuccessToast('Presente salvo.');
   } catch {
     modalErrorMessage.value = 'Nao foi possivel salvar o presente.';
@@ -578,6 +670,65 @@ useClickOutside(newMenuRef, () => {
       @submit="submitGift"
       @cancel="closeCreationModal"
     />
+
+    <form
+      v-else-if="activeCreationType === 'beatriz'"
+      class="flex flex-col gap-4"
+      @submit.prevent="submitVaultGift"
+    >
+      <BaseTextField
+        v-model="vaultGiftForm.title"
+        label="Titulo"
+        required
+      />
+      <BaseTextField
+        v-model="vaultGiftForm.link"
+        label="Link"
+        type="url"
+      />
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <BaseSelect
+          :model-value="events.find((event) => event.tag === vaultGiftForm.event)?.id ?? 0"
+          label="Evento"
+          :options="events.map((event) => ({ id: event.id, name: event.name }))"
+          @update:model-value="vaultGiftForm.event = events.find((event) => event.id === $event)?.tag ?? ''"
+        />
+        <BaseSelect
+          :model-value="giftStatuses.find((status) => status.tag === vaultGiftForm.status)?.id ?? 0"
+          label="Status"
+          :options="giftStatuses.map((status) => ({ id: status.id, name: status.name }))"
+          @update:model-value="vaultGiftForm.status = giftStatuses.find((status) => status.id === $event)?.tag ?? ''"
+        />
+      </div>
+      <BaseSelect
+        v-model="vaultGiftForm.giftListId"
+        label="Lista de presentes"
+        :options="vaultGiftListOptions"
+      />
+      <p
+        v-if="modalErrorMessage"
+        class="text-sm text-text-secondary"
+      >
+        {{ modalErrorMessage }}
+      </p>
+      <div class="flex flex-wrap justify-end gap-2">
+        <BaseButton
+          type="button"
+          variant="secondary"
+          :disabled="isSaving"
+          @click="closeCreationModal"
+        >
+          Cancelar
+        </BaseButton>
+        <BaseButton
+          type="submit"
+          variant="primary"
+          :disabled="isSaving"
+        >
+          {{ isSaving ? 'Salvando...' : 'Salvar' }}
+        </BaseButton>
+      </div>
+    </form>
 
     <PersonForm
       v-else-if="activeCreationType === 'person'"

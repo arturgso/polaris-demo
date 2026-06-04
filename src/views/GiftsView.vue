@@ -10,6 +10,7 @@ import {
   GiftForm,
   PersonForm,
 } from '@/components';
+import { BEATRIZ_PERSON_ID } from '@/constants';
 import { showErrorToast, showSuccessToast, usePageHeader } from '@/composables';
 import {
   deleteGift,
@@ -229,6 +230,11 @@ async function loadOptions() {
 }
 
 async function loadGiftsPage() {
+  if (currentPersonId.value === BEATRIZ_PERSON_ID) {
+    void router.replace({ path: '/', query: { vault: 'unlock' } });
+    return;
+  }
+
   const currentRequestId = requestId + 1;
   requestId = currentRequestId;
   isLoading.value = true;
@@ -238,7 +244,9 @@ async function loadGiftsPage() {
     const loadedPersons = await getPersons();
     const loadedSelectedPerson = currentPersonId.value ? await getPerson(currentPersonId.value) : null;
 
-    persons.value = loadedPersons;
+    const visiblePersons = loadedPersons.filter((person) => person.id !== BEATRIZ_PERSON_ID);
+
+    persons.value = visiblePersons;
     selectedPerson.value = loadedSelectedPerson;
     const filters = getGiftFilters();
 
@@ -254,7 +262,7 @@ async function loadGiftsPage() {
     }
 
     const giftsByPerson = await Promise.all(
-      loadedPersons.map(async (person) => ({
+      visiblePersons.map(async (person) => ({
         person,
         gifts: (await getGiftsByPerson(person.id, filters)).map((gift) => toGiftWithPersonId(gift, person.id)),
       })),
@@ -304,6 +312,7 @@ async function submitGift() {
     giftToEdit.value = null;
 
     await loadGiftsPage();
+    window.dispatchEvent(new Event(giftForm.value.personId === BEATRIZ_PERSON_ID ? 'polaris:vault-changed' : 'polaris:gifts-changed'));
     showSuccessToast('Presente atualizado.');
   } catch {
     modalErrorMessage.value = 'Nao foi possivel salvar o presente.';

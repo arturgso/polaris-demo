@@ -5,8 +5,9 @@ import {
   LoginView,
   SettingsView,
   ShoppingListView,
+  VaultView,
 } from '../views';
-import { hasAuthSession } from '../services';
+import { hasAuthSession, hasVaultSession } from '../services';
 
 const routes = [
   {
@@ -39,6 +40,15 @@ const routes = [
     },
   },
   {
+    path: '/vault',
+    name: 'vault',
+    component: VaultView,
+    meta: {
+      requiresAuth: true,
+      requiresVault: true,
+    },
+  },
+  {
     path: '/settings',
     name: 'settings',
     component: SettingsView,
@@ -58,6 +68,10 @@ router.beforeEach((to) => {
 
   if (to.meta.requiresAuth && !isAuthenticated) {
     return { path: '/login' };
+  }
+
+  if (to.meta.requiresVault && !hasVaultSession()) {
+    return { path: '/', query: { vault: 'unlock' } };
   }
 
   if (to.path === '/login' && isAuthenticated) {

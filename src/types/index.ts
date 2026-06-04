@@ -23,6 +23,9 @@ export type {
   PersonFormData,
   UpdateGiftDTO,
   UpdatePersonDTO,
+  VaultGiftFormData,
+  VaultGiftItem,
+  VaultGiftList,
 } from './Gifts';
 export type { ShoppingItemFormData } from './ShoppingItemForm';
 export type {

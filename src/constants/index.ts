@@ -1,1 +1,7 @@
 export { AUTH_STORAGE_KEY } from './auth';
+export {
+  BEATRIZ_PERSON_ID,
+  VAULT_GIFT_LISTS_STORAGE_KEY,
+  VAULT_ITEMS_STORAGE_KEY,
+  VAULT_PASSWORD,
+} from './vault';

@@ -90,3 +90,29 @@ export interface PersonFormData {
   birthdayMonth: number | '';
   birthdayDay: number | '';
 }
+
+export interface VaultGiftItem {
+  id: number;
+  title: string;
+  link?: string;
+  event?: string;
+  status?: string;
+  giftListId?: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface VaultGiftList {
+  id: number;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface VaultGiftFormData {
+  title: string;
+  link: string;
+  event: string;
+  status: string;
+  giftListId: number;
+}
